@@ -16,11 +16,14 @@ class BusinessController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * @return mixed
      */
     public function index(Request $request)
     {
-        $user = $request->user();
-        return BusinessResource::collection(Business::orderBy("id", "DESC")->get());
+
+        return BusinessResource::collection(Business::when(request('search'), function ($query) {
+            $query->where('title', 'like', '%' . request('search') . '%');
+        })->orderBy("id", "DESC")->paginate(2));
     }
 
     /**

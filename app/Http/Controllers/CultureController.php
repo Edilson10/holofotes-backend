@@ -20,11 +20,15 @@ class CultureController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * @return mixed
      */
     public function index(Request $request)
     {
-        $user = $request->user();
-        return CultureResource::collection(Culture::orderBy("id", "DESC")->get());
+        return CultureResource::collection(Culture::when(request('search'), function ($query) {
+            $query->where('title', 'like', '%' . request('search') . '%');
+        })->orderBy("id", "DESC")->paginate(2));
+
+        //return CultureResource::collection(Culture::orderBy("id", "DESC")->paginate(2));
     }
 
     /**

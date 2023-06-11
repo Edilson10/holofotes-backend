@@ -16,11 +16,16 @@ class FlavorsAirController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * @return mixed
      */
     public function index(Request $request)
     {
         // $user = $request->user();
-        return FlavorsAirResource::collection(FlavorsAir::orderBy("id", "DESC")->get());
+        // return FlavorsAirResource::collection(FlavorsAir::orderBy("id", "DESC")->paginate(2));
+
+        return FlavorsAirResource::collection(FlavorsAir::when(request('search'), function ($query) {
+            $query->where('title', 'like', '%' . request('search') . '%');
+        })->orderBy("id", "DESC")->paginate(2));
     }
 
     /**
